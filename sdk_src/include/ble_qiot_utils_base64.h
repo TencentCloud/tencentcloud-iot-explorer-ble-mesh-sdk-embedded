@@ -13,8 +13,8 @@
  *
  */
 
-#ifndef QCLOUD_BLE_IOT_UTILS_BASE64_H_
-#define QCLOUD_BLE_IOT_UTILS_BASE64_H_
+#ifndef TENCENTCLOUD_IOT_EXPLORER_BLE_MESH_SDK_EMBEDDED_SDK_INCLUDE_BLE_QIOT_UTILS_BASE64_H_
+#define TENCENTCLOUD_IOT_EXPLORER_BLE_MESH_SDK_EMBEDDED_SDK_INCLUDE_BLE_QIOT_UTILS_BASE64_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -24,13 +24,13 @@ extern "C" {
 #include <stdint.h>
 #include "ble_qiot_common.h"
 
-ble_qiot_ret_status_t qcloud_iot_utils_base64encode(unsigned char *dst, size_t dlen, size_t *olen,
-                                                    const unsigned char *src, size_t slen);
+ble_qiot_ret_status_t llsync_mesh_utils_base64encode(unsigned char *dst, size_t dlen, size_t *olen,
+                                                     const unsigned char *src, size_t slen);
 
-ble_qiot_ret_status_t qcloud_iot_utils_base64decode(unsigned char *dst, size_t dlen, size_t *olen,
-                                                    const unsigned char *src, size_t slen);
+ble_qiot_ret_status_t llsync_mesh_utils_base64decode(unsigned char *dst, size_t dlen, size_t *olen,
+                                                     const unsigned char *src, size_t slen);
 
 #ifdef __cplusplus
 }
 #endif
-#endif /* QCLOUD_BLE_IOT_UTILS_BASE64_H_ */
+#endif  // TENCENTCLOUD_IOT_EXPLORER_BLE_MESH_SDK_EMBEDDED_SDK_INCLUDE_BLE_QIOT_UTILS_BASE64_H_

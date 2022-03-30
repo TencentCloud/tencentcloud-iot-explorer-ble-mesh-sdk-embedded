@@ -12,41 +12,35 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 #include <string.h>
 #include "ble_qiot_hmac256.h"
 #include "ble_qiot_sha256.h"
 #include "ble_qiot_utils_base64.h"
 #include "ble_qiot_export.h"
+#include "ble_qiot_import.h"
 #include "ble_qiot_common.h"
 #include "ble_qiot_utils_mesh.h"
 #include "ble_qiot_mesh_cfg.h"
 #include "ble_qiot_template.h"
 #include "ble_qiot_log.h"
 
-llsync_mesh_scan_head_t llsync_mesh_scan_head = {
-    .flags             = {0x02, 0x01, 0x06},
-    .length            = 0x0d,
-    .type              = 0x09,
-};
-
-extern ble_device_info_t sg_dev_info;
-
-const char *mesh_hex(const void *buf, size_t len)
+const char *llsync_mesh_hex(const void *buf, size_t len)
 {
     static const char hex[] = "0123456789abcdef";
-    static char hexbufs[4][137];
-    static uint8_t curbuf;
-    const uint8_t *b = buf;
-    char *str;
-    int i;
+    static char       hexbufs[4][137];
+    static uint8_t    curbuf;
+    const uint8_t    *b = buf;
+    char             *str;
+    int               i;
 
     str = hexbufs[curbuf++];
-    curbuf %= ARRAY_SIZE(hexbufs);
+    curbuf %= LLSYNC_ARRAY_SIZE(hexbufs);
 
-    len = Min(len, (sizeof(hexbufs[0]) - 1) / 2);
+    len = LLSYNC_Min(len, (sizeof(hexbufs[0]) - 1) / 2);
 
     for (i = 0; i < len; i++) {
-        str[i * 2] = hex[b[i] >> 4];
+        str[i * 2]     = hex[b[i] >> 4];
         str[i * 2 + 1] = hex[b[i] & 0xf];
     }
 
@@ -58,7 +52,8 @@ const char *mesh_hex(const void *buf, size_t len)
 // mesh接收数据处理
 ble_qiot_ret_status_t llsync_mesh_recv_data_handle(uint32_t Opcode, uint8_t *data, uint16_t data_len)
 {
-    if (!data || !data_len) {
+    LLSYNC_MESH_POINTER_CHECK(data, LLSYNC_MESH_RS_ERR_PARA);
+    if (!data_len) {
         ble_qiot_log_e("param err.");
         return LLSYNC_MESH_RS_ERR_PARA;
     }
@@ -84,88 +79,104 @@ ble_qiot_ret_status_t llsync_mesh_recv_data_handle(uint32_t Opcode, uint8_t *dat
             break;
         }
 
-        default: 
+        default:
             break;
     }
 
     return LLSYNC_MESH_RS_OK;
 }
 
-// 扫描响应数据获取 已验证
+// 扫描响应数据获取
 ble_qiot_ret_status_t llsync_mesh_scan_data_get(uint8_t *data, uint8_t *data_len)
 {
-    uint8_t index                           = sizeof(llsync_mesh_scan_head_t);
-    uint8_t scan_data[BLE_MESH_ADV_MAX_LEN] = {0};
+    LLSYNC_MESH_POINTER_CHECK(data, LLSYNC_MESH_RS_ERR_PARA);
+    uint8_t           scan_resp_data[LLSYNC_MESH_ADV_MAX_LEN] = {0x02, 0x01, 0x06, 0x0d, 0x09};
+    uint8_t           index                                   = 5;
+    ble_device_info_t dev_info;
 
-    if (!data) {
-        ble_qiot_log_e("param err.");
-        return LLSYNC_MESH_RS_ERR_PARA;
-    }
+    memset(&dev_info, 0, sizeof(ble_device_info_t));
+    llsync_mesh_dev_info_get(&dev_info);
 
-    memcpy(scan_data, &llsync_mesh_scan_head, index);
-    memcpy(&scan_data[index], sg_dev_info.device_name, strlen(sg_dev_info.device_name));
-    index += strlen(sg_dev_info.device_name);;
+    memcpy(&scan_resp_data[index], dev_info.device_name, strlen(dev_info.device_name));
+    index += strlen(dev_info.device_name);
 
-    memcpy(data, scan_data, index);
+    memcpy(data, scan_resp_data, index);
     *data_len = index;
 
     return LLSYNC_MESH_RS_OK;
 }
 
-// UUID获取接口 已验证
+// UUID获取接口
 int llsync_mesh_dev_uuid_get(uint8_t type, uint8_t *data, uint8_t data_len)
 {
-    uint8_t index = 0;
+    LLSYNC_MESH_POINTER_CHECK(data, LLSYNC_MESH_RS_ERR_PARA);
+    uint8_t           index = 0;
+    ble_device_info_t dev_info;
 
-    if (!data || BLE_MESH_DEVICE_UUID_LEN >= data_len) {
-        ble_qiot_log_e("param err.");
+    if (LLSYNC_MESH_DEVICE_UUID_LEN > data_len) {
+        ble_qiot_log_e("The buf len too short.");
         return LLSYNC_MESH_RS_ERR_PARA;
     }
 
-    data[index++] = BLE_MESH_CID_VENDOR_LOW;
-    data[index++] = BLE_MESH_CID_VENDOR_HIGH;
-    if (type == LLSYNC_MESH_UNNET_ADV_BIT)
-        data[index++] = LLSYNC_MESH_SDK_VERSION | LLSYNC_MESH_UNNET_ADV_BIT;
-    else
-        data[index++] = LLSYNC_MESH_SDK_VERSION | LLSYNC_MESH_SILENCE_ADV_BIT;
-    data[index++] = LLSYNC_MESH_ADV_RFU_FLAG2;
-    memcpy(&data[index], sg_dev_info.product_id, sizeof(sg_dev_info.product_id));
-    index += sizeof(sg_dev_info.product_id);
-    data[index] = '\0';
+    memset(&dev_info, 0, sizeof(ble_device_info_t));
+    llsync_mesh_dev_info_get(&dev_info);
 
+    data[index++] = LLSYNC_MESH_CID_VENDOR_LOW;
+    data[index++] = LLSYNC_MESH_CID_VENDOR_HIGH;
+
+    if (type == LLSYNC_MESH_UNNET_ADV_BIT) {
+        data[index++] = LLSYNC_MESH_PROTOCOL_VERSION | LLSYNC_MESH_UNNET_ADV_BIT;
+    } else {
+        data[index++] = LLSYNC_MESH_PROTOCOL_VERSION | LLSYNC_MESH_SILENCE_ADV_BIT;
+    }
+
+    data[index++] = LLSYNC_MESH_ADV_RFU_FLAG2;
+    memcpy(&data[index], dev_info.product_id, sizeof(dev_info.product_id));
+    index += sizeof(dev_info.product_id);
+    data[index++] = 0;  // RFU
+    data[index++] = 0;  // RFU
+    data[index]   = '\0';
+
+    ble_qiot_log_hex(BLE_QIOT_LOG_LEVEL_INFO, "uuid", (const char *)data, index);
     return index;
 }
 
-// AuthValue计算  已验证
+// AuthValue计算
 ble_qiot_ret_status_t llsync_mesh_auth_clac(uint8_t *random, uint8_t *auth_data)
 {
-    uint8_t temp_data[BLE_MESH_RAMDOM_DATA_LEN] = {0};
-    uint8_t sign[HMAC_SHA256_DIGEST_SIZE]       = {0};
-    uint8_t buf[128]                            = {0};
-    uint8_t buf_len                             = 0;
-    uint8_t i                                   = 0;
+    LLSYNC_MESH_POINTER_CHECK(auth_data, LLSYNC_MESH_RS_ERR_PARA);
+    LLSYNC_MESH_POINTER_CHECK(random, LLSYNC_MESH_RS_ERR_PARA);
+    uint8_t           temp_data[LLSYNC_MESH_RAMDOM_DATA_LEN] = {0};
+    uint8_t           sign[HMAC_SHA256_DIGEST_SIZE]          = {0};
+    uint8_t           buf[128]                               = {0};
+    uint8_t           buf_len                                = 0;
+    uint8_t           i                                      = 0;
+    ble_device_info_t dev_info;
+    // uint8_t ran[16] = {0xc9, 0x4f, 0xa8, 0x90, 0xfe, 0x9c, 0x0b, 0x58,0x45,0xb0, 0x3d, 0x74, 0x3b,0xa0,0x66,0x24};
 
-    if (auth_data == NULL || random == NULL) {
-        ble_qiot_log_i("param err.");
-        return LLSYNC_MESH_RS_ERR_PARA;
-    }
+    memset(&dev_info, 0, sizeof(ble_device_info_t));
+    llsync_mesh_dev_info_get(&dev_info);
 
-    memcpy(buf, mesh_hex(random, BLE_MESH_RAMDOM_DATA_LEN), BLE_MESH_RAMDOM_DATA_LEN*2);
+    ble_qiot_log_hex(BLE_QIOT_LOG_LEVEL_INFO, "random", (char *)random, 16);
 
-    buf_len += BLE_MESH_RAMDOM_DATA_LEN*2;
-    memcpy(buf + buf_len, sg_dev_info.product_id, BLE_QIOT_PRODUCT_ID_LEN);
-    buf_len += BLE_QIOT_PRODUCT_ID_LEN;
-    memcpy(buf + buf_len, sg_dev_info.device_name, strlen(sg_dev_info.device_name));
-    buf_len += strlen(sg_dev_info.device_name);
+    memcpy(buf, llsync_mesh_hex(random, LLSYNC_MESH_RAMDOM_DATA_LEN), LLSYNC_MESH_RAMDOM_DATA_LEN * 2);
+    // memcpy(buf, ran, LLSYNC_MESH_RAMDOM_DATA_LEN*2);
 
-    llsync_hmac_sha256(sign, (const uint8_t *)buf, buf_len,
-                    (const uint8_t*)sg_dev_info.psk, sizeof(sg_dev_info.psk));
+    buf_len += LLSYNC_MESH_RAMDOM_DATA_LEN * 2;
+    memcpy(buf + buf_len, dev_info.product_id, LLSYNC_MESH_PRODUCT_ID_LEN);
+    buf_len += LLSYNC_MESH_PRODUCT_ID_LEN;
+    memcpy(buf + buf_len, dev_info.device_name, strlen(dev_info.device_name));
+    buf_len += strlen(dev_info.device_name);
+
+    ble_qiot_log_hex(BLE_QIOT_LOG_LEVEL_INFO, "hmac before", (char *)buf, buf_len);
+
+    llsync_hmac_sha256(sign, (const uint8_t *)buf, buf_len, (const uint8_t *)dev_info.psk, sizeof(dev_info.psk));
 
     for (i = 0; i < HMAC_SHA256_DIGEST_SIZE / 2; i++) {
         temp_data[i] = sign[i] ^ sign[i + HMAC_SHA256_DIGEST_SIZE / 2];
     }
-
-    memcpy(auth_data, temp_data, BLE_MESH_RAMDOM_DATA_LEN);
+    ble_qiot_log_hex(BLE_QIOT_LOG_LEVEL_INFO, "authvalue", (const char *)temp_data, LLSYNC_MESH_RAMDOM_DATA_LEN);
+    memcpy(auth_data, temp_data, LLSYNC_MESH_RAMDOM_DATA_LEN);
 
     return LLSYNC_MESH_RS_OK;
 }

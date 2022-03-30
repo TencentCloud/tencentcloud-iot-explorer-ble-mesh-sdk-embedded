@@ -36,8 +36,8 @@ static const unsigned char base64_dec_map[128] = {
 
 #define BASE64_SIZE_T_MAX ((size_t)-1) /* SIZE_T_MAX is not standard */
 
-ble_qiot_ret_status_t qcloud_iot_utils_base64encode(unsigned char *dst, size_t dlen, size_t *olen,
-                                                    const unsigned char *src, size_t slen)
+ble_qiot_ret_status_t llsync_mesh_utils_base64encode(unsigned char *dst, size_t dlen, size_t *olen,
+                                                     const unsigned char *src, size_t slen)
 {
     size_t         i, n;
     unsigned char *p;
@@ -96,8 +96,8 @@ ble_qiot_ret_status_t qcloud_iot_utils_base64encode(unsigned char *dst, size_t d
     return (LLSYNC_MESH_RS_OK);
 }
 
-ble_qiot_ret_status_t qcloud_iot_utils_base64decode(unsigned char *dst, size_t dlen, size_t *olen,
-                                                    const unsigned char *src, size_t slen)
+ble_qiot_ret_status_t llsync_mesh_utils_base64decode(unsigned char *dst, size_t dlen, size_t *olen,
+                                                     const unsigned char *src, size_t slen)
 {
     size_t         i, n;
     uint32_t       j, x;

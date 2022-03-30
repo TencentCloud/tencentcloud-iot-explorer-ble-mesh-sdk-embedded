@@ -9,8 +9,8 @@
  * limitations under the License.
  *
  */
-#ifndef QCLOUD_BLE_QIOT_MESH_CFG_H
-#define QCLOUD_BLE_QIOT_MESH_CFG_H
+#ifndef TENCENTCLOUD_IOT_EXPLORER_BLE_MESH_SDK_EMBEDDED_CFG_BLE_QIOT_MESH_CFG_H_
+#define TENCENTCLOUD_IOT_EXPLORER_BLE_MESH_SDK_EMBEDDED_CFG_BLE_QIOT_MESH_CFG_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -18,41 +18,47 @@ extern "C" {
 
 #include <stdio.h>
 
-#define LLSYNC_MESH_SDK_VERSION             (1)
+// qiot data storage address
+#define LLSYNC_MESH_RECORD_FLASH_ADDR (0xFE000)
 
-#define LLSYNC_MESH_RECORD_FLASH_ADDR       0xFE000  // qiot data storage address
-#define LLSYNC_MESH_RECORD_FLASH_PAGESIZE   4096     // flash page size, see chip datasheet
+// flash page size, see chip datasheet
+#define LLSYNC_MESH_RECORD_FLASH_PAGESIZE (4096)
 
-#define LLSYNC_MESH_UNNET_ADV_BIT           (0 << 3)
+// Total broadcast hours of unallocated broadcasts(ms)
+#define LLSYNC_MESH_UNNET_ADV_TOTAL_TIME (10 * 60 * 1000)
 
-#define LLSYNC_MESH_SILENCE_ADV_BIT         (1 << 3)
+// If the unmatching timeout expires and the network is still not matched,
+// does it enter the silent broadcast state, which is only used to let Provisioner discover the device
+#define LLSYNC_MESH_SILENCE_ADV_ENABLE (1)
 
-#define LLSYNC_MESH_ADV_RFU_FLAG2           (0x00)
+// Unallocated Broadcast Single Broadcast Duration(ms)
+#define LLSYNC_MESH_UNNET_ADV_DURATION (150)
 
-// 未配网广播总的广播时长(ms)
-#define BLE_MESH_UNNET_ADV_TOTAL_TIME       (10 * 60 * 1000)
+// Silent Broadcast Single Broadcast Duration(ms)
+#define LLSYNC_MESH_SILENCE_ADV_DURATION (150)
 
-// 未配网超时时间到后仍未配网，是否进入静默广播状态，只用于让Provisioner发现设备
-#define BLE_MESH_SILENCE_ADV_ENABLE         (1)
+// Unallocated broadcast interval(ms)
+#define LLSYNC_MESH_UNNET_ADV_INTERVAL (500)
 
-// 未配网广播单次广播时长(ms)
-#define BLE_MESH_UNNET_ADV_DURATION         (150)
+// Silent broadcast interval(ms)
+#define LLSYNC_MESH_SILENCE_ADV_INTERVAL (60 * 1000)
 
-// 静默广播单次广播时长(ms)
-#define BLE_MESH_SILENCE_ADV_DURATION       (150)
+#ifndef __ORDER_LITTLE_ENDIAN__
+#define __ORDER_LITTLE_ENDIAN__ 1234
+#endif
 
-// 未配网广播间隔(ms)
-#define BLE_MESH_UNNET_ADV_INTERVAL         (500)
+#ifndef __ORDER_BIG_ENDIAN__
+#define __ORDER_BIG_ENDIAN__ 3412
+#endif
 
-// 静默广播间隔(ms)
-#define BLE_MESH_SILENCE_ADV_INTERVAL       (60 * 1000)
+#define __BYTE_ORDER__ __ORDER_LITTLE_ENDIAN__
 
-#define MESH_LOG_PRINT(...)                 printf(__VA_ARGS__)
+#define MESH_LOG_PRINT(...) printf(__VA_ARGS__)
 
-#define BLE_QIOT_USER_DEFINE_HEXDUMP        (0)
+#define BLE_QIOT_USER_DEFINE_HEXDUMP (0)
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif  // QCLOUD_BLE_QIOT_MESH_CFG_H
+#endif  // TENCENTCLOUD_IOT_EXPLORER_BLE_MESH_SDK_EMBEDDED_CFG_BLE_QIOT_MESH_CFG_H_

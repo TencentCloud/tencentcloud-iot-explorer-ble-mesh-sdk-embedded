@@ -9,8 +9,8 @@
  * limitations under the License.
  *
  */
-#ifndef QCLOUD_BLE_QIOT_IMPORT_H
-#define QCLOUD_BLE_QIOT_IMPORT_H
+#ifndef TENCENTCLOUD_IOT_EXPLORER_BLE_MESH_SDK_EMBEDDED_INCLUDE_BLE_QIOT_IMPORT_H_
+#define TENCENTCLOUD_IOT_EXPLORER_BLE_MESH_SDK_EMBEDDED_INCLUDE_BLE_QIOT_IMPORT_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -37,4 +37,4 @@ void llsync_mesh_vendor_data_send(uint32_t opcode, uint8_t *data, uint16_t data_
 }
 #endif
 
-#endif  // QCLOUD_BLE_QIOT_IMPORT_H
+#endif  // TENCENTCLOUD_IOT_EXPLORER_BLE_MESH_SDK_EMBEDDED_INCLUDE_BLE_QIOT_IMPORT_H_
