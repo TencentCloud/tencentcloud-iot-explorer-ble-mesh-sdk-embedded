@@ -6,8 +6,8 @@
 
 运行该示例前，请确保你已经阅读了一下文档，并对BLE MESH有了初步了解。
 
-- [LLSync mesh SDK移植说明](../../docs/LLSync mesh SDK移植说明.md)
-- [LLSync Mesh接入规范](../../docs/LLSync Mesh接入规范.md)
+- [LLSync mesh SDK移植说明](../../docs/LLSync_Mesh_SDK移植说明.md)
+- [LLSync Mesh接入规范](../../docs/LLSync_Mesh接入规范.md)
 
 ### 编译环境安装
 
