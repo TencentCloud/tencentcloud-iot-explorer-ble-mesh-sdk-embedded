@@ -5,7 +5,7 @@
 
 
 |术语 |说明 |
-|:--|
+|-----|-----|
 |CID |Company Identifier，公司标识符。腾讯的标识符为0x013A。 |
 |PB-ADV |一种通过蓝牙Mesh beacon给Mesh设备进行配网的交互方式。 |
 |PB-GATT |一种通过蓝牙GATT给Mesh设备进行配网的交互方式。 |
@@ -34,7 +34,7 @@ UUID应用于Unprovisioned Device的PB-ADV广播和PB-GATT广播中，用于小�
 
 
 |Field |Size(Octets) |Notes |
-|:--|
+|-----|-----|----|
 |CID |2 |Company Identifier. 0x013A。 |
 |Flag |1 |bit3~0: 协议版本号，目前是0x01。<br>bit4: 广播状态，0是未配网广播，1是静默广播。<br>bit5 - bit7: RFU。 |
 |Flag2 |1 |RFU，填充0x00。 |
@@ -46,7 +46,7 @@ UUID应用于Unprovisioned Device的PB-ADV广播和PB-GATT广播中，用于小�
 
 
 |AD Type |Total Length |Notes |
-|:--|
+|-----|-----|-----|
 |《Flags》 |3 | |
 |《Complete Local Name》 |8 |使用MAC地址作为设备名称。 |
 
@@ -66,7 +66,7 @@ LLSync Mesh设备上电后如处于未配网状态，需要广播未配网广播
 未配网广播数据示例如下：
 
 |AD Type |Total Length |Notes |
-|:--|
+|-----|-----|-----|
 |《Flags》 |3 |02 01 06 |
 |《Service UUID List》 |4 |03 03 18 27 |
 |《Service Data》 |22 |15 16 18 27 01 3A 01 00 11 22 33 44 55 66 77 88 99 AA 00 00 00 00 |
@@ -80,7 +80,7 @@ LLSync Mesh设备上电后如处于未配网状态，需要广播未配网广播
 静默广播数据示例如下：
 
 |AD Type |Total Length |Notes |
-|:--|
+|-----|-----|-----|
 |《Flags》 |3 |02 01 06 |
 |《Service UUID List》 |4 |03 03 18 27 |
 |《Service Data》 |22 |15 16 18 27 01 3A 09 00 11 22 33 44 55 66 77 88 99 AA 00 00 00 00 |
@@ -152,7 +152,7 @@ LLSync Mesh暂不支持BLE OTA升级。
 
 
 |Field |Size(Octets) |Notes |
-|:--|
+|-----|-----|----|
 |CID |2 |0x013A |
 |vendor-assigned model identifier |2 | |
 
@@ -161,7 +161,7 @@ LLSync Mesh暂不支持BLE OTA升级。
 
 
 |Model Name |Model ID |
-|:--|
+|-----|-----|
 |Vendor Model Server |0x013A0000 |
 |Vendor Model Client |0x013A0001 |
 
@@ -174,7 +174,7 @@ LLSync Mesh暂不支持BLE OTA升级。
 使用3字节操作码，如下表所示。
 
 |Vendor Message |Opcode |
-|:--|
+|-----|-----|
 |Vendor Message Attribute Set |0xC03A01 |
 |Vendor Message Attribute Get |0xC13A01 |
 |Vendor Message Attribute Set Unacknowledged |0xC23A01 |
@@ -191,7 +191,7 @@ Vendor Message里的数据都使用小端优先方式传输。
 该消息用于Vendor Model Client设置Vendor Model Server的一个或多个属性值，消息格式如下。
 
 |Field |Size(Octets) |Notes |
-|:--|
+|-----|-----|------|
 |Opcode |3 |0xC03A01 |
 |TID |1 |Transaction Identifier，每条新消息递增 |
 |Attribute Type |2 |设置的Attribute类型 |
@@ -206,7 +206,7 @@ Attribute Type和Attribute Parameter最多可有15个。当Vendor Model Server�
 该消息用于Vendor Model Client获取Vendor Model Server的一个或多个属性值，消息格式如下。
 
 |Field |Size(Octets) |Notes |
-|:--|
+|-----|-----|------|
 |Opcode |3 |0xC13A01 |
 |TID |1 |Transaction Identifier，每条新消息递增 |
 |Attribute Type |2 |读取的Attribute类型 |
@@ -220,7 +220,7 @@ Attribute Type最多可有15个。当Vendor Model Server收到Attribute Get消�
 该消息用于Vendor model Client设置Vendor Model Server的一个或多个属性值，消息格式如下。
 
 |Field |Size(Octets) |Notes |
-|:--|
+|-----|-----|-----|
 |Opcode |3 |0xC23A01 |
 |TID |1 |Transaction Identifier，每条新消息递增 |
 |Attribute Type |2 |设置的Attribute类型 |
@@ -235,7 +235,7 @@ Attribute Type和Attribute Parameter最多可有15个。当Vendor Model Server�
 该消息用于Vendor Model Server回复Attribute Get和Attribute Set命令或上报设备状态信息给Vendor Model Client，消息格式如下。
 
 |Field |Size(Octets) |Notes |
-|:--|
+|-----|-----|----|
 |Opcode |3 |0xC33A01 |
 |TID |1 |Transaction Identifier，每条新消息递增 |
 |Attribute Type |2 |上报的Attribute类型 |
@@ -250,7 +250,7 @@ Vendor Model Client收到Attribute Status后，不需要回复消息给Vendor Mo
 该消息用于Vendor Model Server发送属性给Vendor Model Client，消息格式如下。
 
 |Field |Size(Octets) |Notes |
-|:--|
+|-----|-----|------|
 |Opcode |3 |0xC43A01 |
 |TID |1 |Transaction Identifier，每条新消息递增，回复控制命令的TID为下发消息的TID<br>设备状态主动改变上报的TID从128到191循环 |
 |Attribute Type |2 |上报的Attribute类型 |
@@ -265,7 +265,7 @@ Attribute Type和Attribute Parameter最多可有15个。当Vendor Model Client�
 该消息用于Vendor Model Client回复给Vendor Model Server，用于表示已收到Vendor Model Server发出的Indication，消息格式如下。
 
 |Field |Size(Octets) |Notes |
-|:--|
+|-----|-----|-----|
 |Opcode |3 |0xC53A01 |
 |TID |1 |Transaction Identifier，收到的Indication消息的TID |
 
@@ -274,7 +274,7 @@ Attribute Type和Attribute Parameter最多可有15个。当Vendor Model Client�
 
 
 |Attr Class |Attr Name |Attr Type |Data Struct |Unit |Accuracy |Notes |
-|:--|
+|-----|-----|----|------|-----|-----|----|
 |系统属性(0xFFxx)|错误码|0xFF00|uint8 Error_Code|-|-|Error Code：错误码|
 |系统属性(0xFFxx)|版本信息|0xFF01|uint32 version_number|-|-|version_number：与OTA的版本一致|
 |系统属性(0xFFxx) |设备绑定 |0xFF02 |u32 Nonce u32 time |- |- |用于小程序绑定设备 |
@@ -288,7 +288,7 @@ Attribute Type和Attribute Parameter最多可有15个。当Vendor Model Client�
 
 ## 设备 Mesh 协议栈资源要求
 |资源类目|要求|涉及操作|备注|
-|:--|
+|-----|-----|-----|------|
 |Proxy filter list 长度上限|>=2|Add Addresses to Filter|小程序作为 Proxy Client，通过 GATT 连接支持 Proxy 能力的设备（Proxy Server）后，需要设置 Proxy filter list，其中包含 2 个地址:<br>1.当前小程序用户的单播地址；<br>2.所有小程序用户共同订阅的组地址（0xf000）|
 |节点可添加的 NetKey 数量|>=2|Config NetKey Add和Provisioning Data| 1.小程序对设备配网期间，通过 Provisioning Data 下发一个初始 NetKey<br>2.小程序将设备绑定到连连家庭后，会通过 Config NetKey Add 重新设置一个 NetKey（小程序后续会增加该行为，目前暂时使用初始 NetKey）|
 |节点可添加的 AppKey 数量|>=2|Config AppKey Add|1.小程序对设备配网后，会向设备添加一个 AppKey，用于小程序与设备的一对一控制<br>2.小程序建立设备组时，会向设备添加一个 AppKey，用于设备组的控制|
